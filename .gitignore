@@ -119,3 +119,6 @@ build/
 data/
 config/
 credentials/
+
+# JetBrains
+.idea/

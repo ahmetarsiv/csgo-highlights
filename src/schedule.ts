@@ -35,14 +35,18 @@ const fetchPreviousUpcomingMatches = (): UpcomingMatch[] => {
     const file_path = "./data/scheduler/upcoming.json";
     if (!fs.existsSync(file_path)) {
         return [];
-    }
-    else {
-        return JSON.parse(fs.readFileSync(file_path, "utf-8")) as UpcomingMatch[];
+    } else {
+        const fileContent = fs.readFileSync(file_path, "utf-8");
+        return fileContent ? JSON.parse(fileContent) : [];
     }
 };
 
 // Checks if any games are done, and stars processing if they are ready.
 const checkIfDone = (matches: UpcomingMatch[]): void => {
+    if (!matches) {
+        return;
+    }
+
     matches.map(match => {
         if (match.date && match.format && match.date + getTimeOffset(match.format) < Date.now()) {
             void HLTV.getMatch({ id: match.id }).then(res => {
@@ -53,6 +57,7 @@ const checkIfDone = (matches: UpcomingMatch[]): void => {
         }
     });
 };
+
 
 // Return the time in milliseconds we expect a match with the given format to take.
 const getTimeOffset = (format: string): number => {
